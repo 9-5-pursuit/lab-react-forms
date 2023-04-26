@@ -6,15 +6,6 @@ function Form() {
   const [operation, setOperation] = useState("");
   const [result, setResult] = useState("");
 
-  function handleVal(values) {
-    // let val = values;
-    // let input = val.target.value;
-    // setValues(inputArray);
-    // console.log(values);
-  }
-
-  function handleOperation() {}
-
   function handleSum(array) {
     return array.reduce((a, b) => a + b, 0);
   }
@@ -37,22 +28,32 @@ function Form() {
     e.preventDefault();
     let inputArray = values.split(",");
     let parseArray = inputArray.map((input) => parseInt(input));
-    if (parseArray.value === "number") {
-      if (operation === "sum") {
-        setResult(handleSum(parseArray));
-      } else if (operation === "average") {
-        setResult(handleAvg(parseArray));
-      } else if (operation === "mode") {
-        setResult(handleMode(parseArray));
-      }
-    } else {
-      setResult("Invalid input");
+
+    //const regex = /\d+(,\d+)*/g;
+    // if (regex.test(parseArray)) {
+
+    // } else {
+    //   setResult("Invalid input.")
+    // }
+    if (operation === "sum") {
+      handleSum(parseArray) !== "NaN"
+        ? setResult(handleSum(parseArray))
+        : setResult("Invalid input.");
+      // setResult(handleSum(parseArray));
+    } else if (operation === "average") {
+      handleAvg(parseArray) !== "NaN"
+        ? setResult(handleAvg(parseArray))
+        : setResult("Invalid input.");
+      //setResult(handleAvg(parseArray));
+    } else if (operation === "mode") {
+      handleMode(parseArray) !== "NaN"
+        ? setResult(handleMode(parseArray))
+        : setResult("Invalid input.");
+      //setResult(handleMode(parseArray));
+    } else if (operation === "") {
+      setResult("Invalid input.");
     }
   }
-  //
-
-  function handleResult() {}
-
   return (
     <>
       <form>
