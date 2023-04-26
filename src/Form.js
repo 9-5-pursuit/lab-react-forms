@@ -84,7 +84,7 @@ function Form() {
     <>
       <form>
         <input id="values" name="values" type="text" value={userInput} onChange={simplifyNum} />
-        <select id="operation" name="operation" onChange={handleSelectChange}>
+        <select id="operation" name="operation" value={selectOption} onChange={handleSelectChange}>
           <option value=""></option>
           <option value="sum">sum</option>
           <option value="average">average</option>
