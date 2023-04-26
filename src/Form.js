@@ -31,6 +31,8 @@ function Form() {
         return previousValue + currentValue;
       });
       setResult(sum / valuesArr.length);
+    } else if (operation === "mode") {
+      handleMode();
     }
   }
 
@@ -43,15 +45,15 @@ function Form() {
     setResult("");
   }
 
-  // function handleMode(array) {
-  //   const obj = {};
-  //   array.forEach((number) => {
-  //     if (!obj[number]) {
-  //       obj[number] = 1;
-  //     } else {
-  //     }
-  //   });
-  // }
+  function handleMode() {
+    let counts = {};
+    valuesArr.forEach(function (e) {
+      if (counts[e] === undefined) {
+        counts[e] = 0;
+      }
+      counts[e] += 1;
+    });
+  }
 
   return (
     <>
