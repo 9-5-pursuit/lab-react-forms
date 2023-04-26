@@ -6,8 +6,8 @@ function Form() {
   const [select, setSelect] = useState(""); // Selected operation (sum, average, mode)
   const [numberArray, setNumberArray] = useState(); // Array of numbers from input
   const [result, setResult] = useState(); // Calculated result
-  const [inputClass, setInputClass] = useState(); // CSS class for input field
-  const [selectClass, setSelectClass] = useState(); // CSS class for select field
+  const [inputClass, setInputClass] = useState(); // class for input field
+  const [selectClass, setSelectClass] = useState(); // class for select field
 
   // Event handler for select field change
   function handleSelectChange(event) {
@@ -31,8 +31,8 @@ function Form() {
       })
     ) {
       setResult("Invalid input."); // Set error message in result state variable
-      setInputClass("error"); // Set CSS class for input field for error styling
-      setSelectClass("error"); // Set CSS class for select field for error styling
+      setInputClass("error"); // Set class for input field for error styling
+      setSelectClass("error"); // Set  class for select field for error styling
     } else {
       // Perform calculation based on selected operation
       if (select === "sum") {
@@ -71,14 +71,14 @@ function Form() {
         }
         setResult(mode); // Set calculated mode in result state variable
       }
-      // Reset state variables and CSS classes
+      // Reset state variables and classes
       setNumberArray("");
       setSelect("");
       setInputClass("");
       setSelectClass("");
     }
   }
-  // Render the from and results
+  // Render the form and results
   return (
     <>
       <form onSubmit={handleFormSubmit}>
