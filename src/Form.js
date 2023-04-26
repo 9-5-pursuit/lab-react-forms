@@ -1,94 +1,121 @@
 import React, { useState } from "react";
 import "./Form.css";
-
+// 1. Handle form submit and form inputs
+// 2. Convert input value into array, array values into numbers
+// 3. Handle Errors
+// 4. Handle Calculations
+// 5. Handle Interface Changes (result & error)
 function Form() {
-  const [arr, setArr] = useState([]);
+  const [values, setValues] = useState("");
+  const [operation, setOperation] = useState("");
+  const [validForm, setValidForm] = useState(true);
+  const [result, setResult] = useState(null);
+  // Convert input value into array, array values into numbers
+  function convertToNumbersArray() {
+    console.log("convertToNumbersArray values", values);
+    console.log("convertToNumbersArray values split", values.split(","));
 
-  let [result, setResult] = useState(0);
-
-  function getValue(e) {
-    e.preventDefault();
-    let textValue = document.getElementById("values");
-
-    let arr = textValue.value.split(",");
-    setArr(arr);
-    selectOperation();
+    return values.split(",").map((value) => parseInt(value));
   }
 
-  function selectOperation() {
-    // do an onChange
-    let operation = document.getElementById("operation");
-    if (operation.value === "sum") {
-      getSum(arr);
-      // console.log(setResult(getSum(arr)));
+  function isValidForm(numbersArray) {
+    if (numbersArray.length === 0 || operation === "") return false;
+
+    for (const number of numbersArray) {
+      if (isNaN(number)) return false;
     }
-    if (operation.value === "average") {
-      getAvg(arr);
-    }
-    if (operation.value === "mode") {
-      // console.log(arr);
-      getMode(arr);
-    }
+
+    return true;
   }
 
-  let sum = 0;
-  function getSum(arr) {
-    console.log(`this is my ${arr}`);
-    console.log(arr);
+  function getMode(numbersArray) {
+    const sortedNumbers = numbersArray.sort();
+    console.log(sortedNumbers);
 
-    for (let i = 0; i < arr.length; i++) {
-      sum += arr[i];
-      // console.log(arr[i]);
-      // console.log(sum);
-    }
-    // console.log(sum);
-    return setResult(sum);
-  }
+    let max = 0;
+    let counter = 0;
+    let value = 0;
 
-  function getAvg(arr) {}
-
-  function getMode(arr) {
-    // count amount of occurences of each number
-
-    // create object
-    const obj = {};
-    // loop over array
-    arr.forEach((number) => {
-      // for each number in array,
-      // if it doesn't already exist as a key on the
-      // object, create one and set its value to 1.
-      if (!obj[number]) {
-        obj[number] = 1;
+    for (let i = 0; i < sortedNumbers.length; i++) {
+      if (sortedNumbers[i] === sortedNumbers[i + 1]) {
+        counter++;
+        if (counter > max) {
+          max = counter;
+          value = sortedNumbers[i];
+        }
       } else {
-        // if it already exists as key on the object,
-        // increment its corresponding value.
-        obj[number] += 1;
-      }
-    });
-
-    // return object key with highest value.
-    let highestValue = 0;
-    let highestValueKey = 0;
-
-    for (let key in obj) {
-      const value = obj[key];
-      if (value > highestValue) {
-        highestValue = value;
-        highestValueKey = key;
+        counter = 0;
       }
     }
 
-    // convert key back to number
-    return setResult(Number(highestValueKey));
+    return value;
   }
 
-  function getResult() {}
+  function getSum(numbersArray) {
+    // let total = 0;
+    // for (const number of numbersArray) {
+    //   total += number;
+    // }
+    // return total;
+
+    const sum = numbersArray.reduce((total, current) => total + current, 0);
+    return sum;
+  }
+
+  function getAverage(numbersArray) {
+    const sum = getSum(numbersArray);
+    return sum / numbersArray.length;
+  }
+
+  function resetForm() {
+    setValues("");
+    setOperation("");
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setValidForm(true);
+
+    const numbersArray = convertToNumbersArray();
+
+    // Validation
+    if (!isValidForm(numbersArray)) {
+      return setValidForm(false);
+    }
+
+    // Handle Operations
+    if (operation === "mode") {
+      const mode = getMode(numbersArray);
+      setResult(mode);
+    } else if (operation === "average") {
+      const average = getAverage(numbersArray);
+      setResult(average);
+    } else if (operation === "sum") {
+      const sum = getSum(numbersArray);
+      setResult(sum);
+    }
+
+    resetForm();
+  }
 
   return (
     <>
-      <form onSubmit={getValue}>
-        <input id="values" name="values" type="text" />
-        <select id="operation" name="operation" onChange={selectOperation}>
+      <form onSubmit={handleSubmit}>
+        <input
+          id="values"
+          className={!validForm && "error"}
+          name="values"
+          type="text"
+          value={values}
+          onChange={(event) => setValues(event.target.value)}
+        />
+        <select
+          id="operation"
+          className={!validForm && "error"}
+          name="operation"
+          value={operation}
+          onChange={(event) => setOperation(event.target.value)}
+        >
           <option value=""></option>
           <option value="sum">sum</option>
           <option value="average">average</option>
@@ -97,7 +124,7 @@ function Form() {
         <button type="submit">Calculate</button>
       </form>
       <section id="result">
-        <p>{result}</p>
+        <p>{validForm ? result : "Invalid input."}</p>
       </section>
     </>
   );
