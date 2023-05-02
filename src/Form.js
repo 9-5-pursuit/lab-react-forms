@@ -1,46 +1,127 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import "./Form.css";
 
-
-
-function HandleNumbersInput(e){
-
-  const [number, setNumber] = useState()
-  setNumber(e.target.value)
-console.log(e.target.value);
-}
-
-function HandleOperation(e){
-  const [option, setOption] = useState("")
-  const [number, setNumber] = useState()
-
-  setOption(e.target.value)
-
-  if (option === "sum"){
-    setNumber(e.target.value.split(","))
-
-    
-  }
-
-  if (option === "average"){
-    setNumber(e.target.value.split(","))
-
-  }
-
-
-  
-
-  console.log(option)
-}
-
+// 1. Handle form submit and form inputs
+// 2. Convert input value into array, array values into numbers
+// 3. Handle Errors
+// 4. Handle Calculations
+// 5. Handle Interface Changes (result & error)
 
 function Form() {
+  const [values, setValues] = useState("");
+  const [operation, setOperation] = useState("");
+  const [validForm, setValidForm] = useState(true);
+  const [result, setResult] = useState(null);
+
+  // Convert input value into array, array values into numbers
+  function convertToNumbersArray() {
+    console.log("convertToNumbersArray values", values);
+    console.log("convertToNumbersArray values split", values.split(","));
+
+    return values.split(",").map((value) => parseInt(value));
+  }
+
+  function isValidForm(numbersArray) {
+    if (numbersArray.length === 0 || operation === "") return false;
+
+    for (const number of numbersArray) {
+      if (isNaN(number)) return false;
+    }
+
+    return true;
+  }
+
+  function getMode(numbersArray) {
+    const sortedNumbers = numbersArray.sort();
+    console.log(sortedNumbers);
+
+    let max = 0;
+    let counter = 0;
+    let value = 0;
+
+    for (let i = 0; i < sortedNumbers.length; i++) {
+      if (sortedNumbers[i] === sortedNumbers[i + 1]) {
+        counter++;
+        if (counter > max) {
+          max = counter;
+          value = sortedNumbers[i];
+        }
+      }
+      else {
+        counter = 0;
+      }
+    }
+
+    return value;
+  }
+
+  function getSum(numbersArray) {
+    // let total = 0;
+    // for (const number of numbersArray) {
+    //   total += number;
+    // }
+    // return total;
+
+    const sum = numbersArray.reduce((total, current) => total + current, 0);
+    return sum;
+  }
+
+  function getAverage(numbersArray) {
+    const sum = getSum(numbersArray);
+    return sum / numbersArray.length;
+  }
+
+  function resetForm() {
+    setValues("");
+    setOperation("");
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setValidForm(true);
+
+    const numbersArray = convertToNumbersArray();
+
+    // Validation
+    if (!isValidForm(numbersArray)) {
+      return setValidForm(false);
+    }
+
+    // Handle Operations
+    if (operation === "mode") {
+      const mode = getMode(numbersArray);
+      setResult(mode);
+    }
+    else if (operation === "average") {
+      const average = getAverage(numbersArray);
+      setResult(average);
+    }
+    else if (operation === "sum") {
+      const sum = getSum(numbersArray);
+      setResult(sum);
+    }
+
+    resetForm();
+  }
+
   return (
     <>
-      <form>
-        <input id="values" name="values" type="text" onChange={HandleNumbersInput}/>
-        <select id="operation" name="operation" onChange={HandleOperation}>
+      <form onSubmit={handleSubmit}>
+        <input
+          id="values"
+          className={!validForm && "error"}
+          name="values"
+          type="text"
+          value={values}
+          onChange={(event) => setValues(event.target.value)}
+        />
+        <select
+          id="operation"
+          className={!validForm && "error"}
+          name="operation"
+          value={operation}
+          onChange={(event) => setOperation(event.target.value)}
+        >
           <option value=""></option>
           <option value="sum">sum</option>
           <option value="average">average</option>
@@ -49,7 +130,7 @@ function Form() {
         <button type="submit">Calculate</button>
       </form>
       <section id="result">
-        <p></p>
+        <p>{validForm ? result : "Invalid input."}</p>
       </section>
     </>
   );
