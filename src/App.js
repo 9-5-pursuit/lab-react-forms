@@ -8,6 +8,7 @@ function App() {
       <p>Enter each number in the array, separated by a ','</p>
       <Form />
     </main>
+    
   );
 }
 
