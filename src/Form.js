@@ -1,25 +1,21 @@
 import React, { useState } from "react";
 import "./Form.css";
-// 1. Handle form submit and form inputs
-// 2. Convert input value into array, array values into numbers
-// 3. Handle Errors
-// 4. Handle Calculations
-// 5. Handle Interface Changes (result & error)
+
 function Form() {
   const [values, setValues] = useState("");
   const [operation, setOperation] = useState("");
   const [validForm, setValidForm] = useState(true);
   const [result, setResult] = useState(null);
-  // Convert input value into array, array values into numbers
-  function convertToNumbersArray() {
-    console.log("convertToNumbersArray values", values);
-    console.log("convertToNumbersArray values split", values.split(","));
 
-    return values.split(",").map((value) => parseInt(value));
+  function convertToNumbersArray() {
+    const numbers = values.split(",").map((value) => parseInt(value));
+    return numbers;
   }
 
   function isValidForm(numbersArray) {
-    if (numbersArray.length === 0 || operation === "") return false;
+    if (numbersArray.length === 0 || operation === "") {
+      return false;
+    }
 
     for (const number of numbersArray) {
       if (isNaN(number)) return false;
@@ -28,9 +24,14 @@ function Form() {
     return true;
   }
 
+  function resetForm() {
+    setValues("");
+    setOperation("");
+    // setResult(null);
+  }
+
   function getMode(numbersArray) {
     const sortedNumbers = numbersArray.sort();
-    console.log(sortedNumbers);
 
     let max = 0;
     let counter = 0;
@@ -47,29 +48,25 @@ function Form() {
         counter = 0;
       }
     }
-
     return value;
-  }
-
-  function getSum(numbersArray) {
-    // let total = 0;
-    // for (const number of numbersArray) {
-    //   total += number;
-    // }
-    // return total;
-
-    const sum = numbersArray.reduce((total, current) => total + current, 0);
-    return sum;
   }
 
   function getAverage(numbersArray) {
     const sum = getSum(numbersArray);
-    return sum / numbersArray.length;
+    const average = sum / numbersArray.length;
+    return average;
   }
 
-  function resetForm() {
-    setValues("");
-    setOperation("");
+  function getSum(numbersArray) {
+    if (!numbersArray || numbersArray.length === 0) {
+      return 0;
+    }
+
+    const sum = numbersArray.reduce(
+      (total, current) => total + parseInt(current),
+      0
+    );
+    return sum;
   }
 
   function handleSubmit(event) {
@@ -78,23 +75,20 @@ function Form() {
 
     const numbersArray = convertToNumbersArray();
 
-    // Validation
     if (!isValidForm(numbersArray)) {
       return setValidForm(false);
     }
 
-    // Handle Operations
+    let calculatedResult = null;
     if (operation === "mode") {
-      const mode = getMode(numbersArray);
-      setResult(mode);
+      calculatedResult = getMode(numbersArray);
     } else if (operation === "average") {
-      const average = getAverage(numbersArray);
-      setResult(average);
+      calculatedResult = getAverage(numbersArray);
     } else if (operation === "sum") {
-      const sum = getSum(numbersArray);
-      setResult(sum);
+      calculatedResult = getSum(numbersArray);
     }
 
+    setResult(calculatedResult);
     resetForm();
   }
 
@@ -103,7 +97,7 @@ function Form() {
       <form onSubmit={handleSubmit}>
         <input
           id="values"
-          className={!validForm && "error"}
+          className={!validForm ? "error" : ""}
           name="values"
           type="text"
           value={values}
@@ -111,7 +105,6 @@ function Form() {
         />
         <select
           id="operation"
-          className={!validForm && "error"}
           name="operation"
           value={operation}
           onChange={(event) => setOperation(event.target.value)}
