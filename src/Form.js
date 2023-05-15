@@ -11,7 +11,7 @@ function Form() {
 
   /* functions */
 
-  //fn to convert input and seperate with commas then parse into number
+  //fn to convert input and delete commas then parse into number
   function convertInputToArray() {
     return input.split(",").map((number) => parseInt(number));
   }
@@ -69,6 +69,7 @@ function Form() {
   /* Click event*/
   function clickSubmit(event) {
     event.preventDefault();
+    // console.log(input, valid, operation, result);
 
     setValid(true);
 
