@@ -2,57 +2,93 @@ import React, { useState } from "react";
 import "./Form.css";
 
 function Form() {
-  const [operation, setOperation] = useState("");
-  const [startStr, setStartStr] = useState("");
   const [result, setResult] = useState("");
-  const [numArr, setNumArr] = useState([]);
+  //const [numArr, setNumArr] = useState([]);
+  const [userInput, setUserInput] = useState("");
+  const [operation, setOperation] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
-    //setOperation(e.target[1].value);
-    //console.log(e.target[1].value);
-    console.log(operation);
-    console.log(startStr);
-
-    formatArr(startStr.split(","));
-    // setOperation(e.target[1].value);
-    // console.log(operation);
-    handleOperation(numArr);
-
-    console.log(numArr);
-  }
-  function handleOperation(arr) {
-    if (!operation) {
-      setResult("Invalid Input");
-    }
-    let total = 0;
-    if (operation === "sum") {
-      arr.reduce((previous, current) => previous + current, total);
-      setResult(total);
-    } else if (operation === "average") {
-      arr.reduce((previous, current) => previous + current, total);
-      setResult(total / arr.length);
-    } else if (operation === "mode") {
-    }
-  }
-  function handleSelectChange(e) {
-    setOperation(e.target.value);
-  }
-  function handleTextChange(e) {
-    setStartStr(e.target.value);
-  }
-  function formatArr(arr) {
-    console.log(arr);
-    const newArray = arr.map((element) => {
-      return parseFloat(element);
-    });
-    console.log(newArray);
-
-    if (newArray.includes(NaN)) {
-      setResult("Invalid Input");
+    setResult("");
+    if (operation === "") {
+      setResult("Invalid input.");
+    } else if (userInput === "") {
+      setResult("Invalid input.");
     } else {
-      setNumArr(...numArr, newArray);
+      // console.log(userInput);
+      const formattedInput = formatter(userInput);
+      if (formattedInput === "invalid") {
+        setResult("Invalid input.");
+      } else {
+        // console.log(formattedInput);
+        // console.log(operation);
+
+        setResult(handleOperations(formattedInput));
+      }
     }
+    handleReset();
+  }
+  function formatter(str) {
+    //console.log(str);
+    if (str === "") {
+      return "invalid";
+    } else {
+      let localStr = str.split(",");
+      let update = localStr.map((item) => {
+        let localItem = Number(item);
+        return localItem;
+      });
+      //console.log(update);
+      //console.log(typeof update[0]);
+      if (update.includes(NaN)) {
+        return (localStr = "invalid");
+      } else {
+        return update;
+      }
+    }
+  }
+  function handleReset() {
+    setUserInput("");
+    setOperation("");
+  }
+  function handleOperations(arr) {
+    let localArr = arr;
+    let localResult;
+    if (operation === "sum") {
+      console.log("initiate sum");
+      localResult = localArr.reduce(
+        (accumulator, currentValue) => accumulator + currentValue
+      );
+    } else if (operation === "average") {
+      console.log("initiate average");
+      localResult = localArr.reduce(
+        (accumulator, currentValue) => accumulator + currentValue
+      );
+      localResult = localResult / localArr.length;
+    } else {
+      console.log("initiate mode");
+      //console.log(localArr);
+      localArr = localArr.sort((a, b) => a - b);
+      const counterObj = {};
+      localArr.forEach((number) => {
+        !counterObj[number]
+          ? (counterObj[number] = 1)
+          : (counterObj[number] += 1);
+      });
+      //----------------------//
+      let highestNum = 0;
+      let highestNumKey = -Infinity;
+
+      for (let prop in counterObj) {
+        const value = counterObj[prop];
+        if (value > highestNum) {
+          highestNum = value;
+          highestNumKey = prop;
+        }
+      }
+      localResult = Number(highestNumKey);
+    }
+    return localResult;
   }
 
   return (
@@ -62,9 +98,15 @@ function Form() {
           id="values"
           name="values"
           type="text"
-          onChange={handleTextChange}
+          value={userInput}
+          onChange={(event) => setUserInput(event.target.value)}
         />
-        <select id="operation" name="operation" onChange={handleSelectChange}>
+        <select
+          id="operation"
+          name="operation"
+          value={operation}
+          onChange={(event) => setOperation(event.target.value)}
+        >
           <option value=""></option>
           <option value="sum">sum</option>
           <option value="average">average</option>
@@ -217,4 +259,56 @@ export default Form;
 //   // } else {
 //   //   console.log(event.target.value);
 //   // }
+// }
+// console.log(startStr, operation);
+//   let localOperation = operation;
+//   let localStartStr = startStr;
+//   formatter(localStartStr);
+
+//   //setOperation(e.target[1].value);
+//console.log(e.target[1].value);
+// console.log(operation);
+// console.log(startStr);
+// let newNums = startStr;
+// newNums = formatArr(newNums.split(","));
+// // setOperation(e.target[1].value);
+// // console.log(operation);
+// //handleOperation(numArr);
+// console.log(newNums);
+// setNumArr([...numArr, newNums]);
+
+// console.log(numArr);
+
+// function handleOperation(arr) {
+//   if (!operation) {
+//     setResult("Invalid Input");
+//   }
+//   let total = 0;
+//   if (operation === "sum") {
+//     arr.reduce((previous, current) => previous + current, total);
+//     setResult(total);
+//   } else if (operation === "average") {
+//     arr.reduce((previous, current) => previous + current, total);
+//     setResult(total / arr.length);
+//   } else if (operation === "mode") {
+//   }
+// }
+
+// function formatArr(arr) {
+//   console.log(arr);
+
+//   const fullArray = [...arr];
+
+//   console.log(fullArray);
+//   const newArray = fullArray.map((element) => {
+//     return parseFloat(element);
+//   });
+//   console.log(newArray);
+//   setNumArr([...newArray]);
+//   console.log(numArr);
+//   if (newArray.includes(NaN)) {
+//     setResult("Invalid Input");
+//   } else {
+//     return newArray;
+//   }
 // }
