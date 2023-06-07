@@ -4,10 +4,10 @@ import "./App.css";
 
 function App() {
   return (
-    <main>
-      <p>Enter each number in the array, separated by a ','</p>
+    <div className="App">
+      <h4>Enter each number in the array, separated by a ','</h4>
       <Form />
-    </main>
+    </div>
   );
 }
 
